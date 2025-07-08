@@ -94,7 +94,7 @@ export function buscarLibros(){
 
         const sql = conectar();
 
-        sql`SELECT * FROM books`
+        sql`SELECT * FROM books ORDER BY id DESC`
         .then( resultado => {
             sql.end();
             ok(resultado) 
@@ -153,7 +153,7 @@ crearUsuario("jacinta", "123456")
 .catch(x => console.log(x))
 */
 /*
-buscarUsuario("jacinta")
+buscarUsuario("tomasa")
 .then(x => console.log(x))
 .catch(x => console.log(x))
 */

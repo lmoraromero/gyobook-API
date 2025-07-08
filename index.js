@@ -38,8 +38,22 @@ function autorizar(peticion, respuesta, siguiente){
 }
 
 //Ruta para registro de usuarios
-servidor.post("/registro", (peticion, respuesta) => {
-    respuesta.send("...registro de usuario")
+servidor.post("/registro", async (peticion, respuesta) => {
+    let { usuario, password } = peticion.body;
+
+    if(!usuario || !password){
+        return respuesta.sendStatus(400);
+    }
+
+    try{
+        let id = await crearUsuario(usuario, password);
+        respuesta.status(201);
+        //respuesta.send(`usuario con id: ${id}`)
+    }catch(error){
+        respuesta.status(500);
+        respuesta.json( {error : "error en el servidor"} );
+    }
+
 });
 
 //Ruta para login del usuario
@@ -70,23 +84,63 @@ servidor.post("/login", async (peticion, respuesta) => {
 })
 
 //Ruta para traer todos los libros
-servidor.get("/libros", (peticion, respuesta) => {
-    respuesta.send("......mostrando libros")
+servidor.get("/libros", async (peticion, respuesta) => {
+    try{
+        let libros = await buscarLibros();
+        respuesta.json(libros);
+    }catch(error){
+        respuesta.status(500);
+        respuesta.json( {error : "error en el servidor"} );
+    }
 })
 
 //Ruta para crear una ficha de libro nueva
-servidor.post("/libro/nuevo", (peticion, respuesta) => {
-    respuesta.send(".....libro nuevo")
+servidor.post("/libro/nuevo", async (peticion, respuesta) => {
+    let { titulo, autor, url_portada, genero, fecha_publicacion, paginas, sinopsis } = peticion.body;
+
+    if(!titulo || !autor || !url_portada || !genero || !fecha_publicacion || !paginas || !sinopsis){
+        return respuesta.status(400);
+    }
+
+    try{
+        let id = await crearLibro(titulo, autor, url_portada, genero, fecha_publicacion, paginas, sinopsis);
+        respuesta.status(201);
+        respuesta.send(`libro con id: ${id}`)
+    }catch(error){
+        respuesta.status(500);
+        respuesta.json( {error : "error en el servidor"} );
+    }
 })
 
 //Ruta para login del usuario
-servidor.post("/reviews/nueva", (peticion, respuesta) => {
-    respuesta.send(".....nueva reseña")
+servidor.post("/reviews/nueva", async (peticion, respuesta) => {
+    let { puntuacion, id_usuario, id_libro, texto } = peticion.body;
+
+    if(!puntuacion || !id_usuario || !id_libro || !texto) {
+        return respuesta.status(400)
+    }
+
+    try{
+        let id = await crearReview(puntuacion, id_usuario, id_libro, texto);
+        respuesta.status(201);
+        respuesta.send(`reseña con id: ${id}`)
+    }catch(error){
+        respuesta.status(500);
+        respuesta.json( {error : "error en el servidor"} );
+    }
 })
 
 //Ruta para login del usuario
-servidor.get("/reviews/:id_libro", (peticion, respuesta) => {
-    respuesta.send(`review del libro con id ${peticion.params.id_libro}`)
+servidor.get("/reviews/:id_libro", async (peticion, respuesta) => {
+    let {id_libro} = peticion.params;
+
+    try{
+        let reviews = await buscarReviews(id_libro);
+        respuesta.json(reviews);
+    }catch(error){
+        respuesta.status(500);
+        respuesta.json( {error : "error en el servidor"} );
+    }
 })
 
 
