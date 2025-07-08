@@ -102,6 +102,15 @@ servidor.post("/libro/nuevo", async (peticion, respuesta) => {
         return respuesta.status(400);
     }
 
+    if (!Number.isInteger(paginas) || paginas <= 0) {
+        return respuesta.status(422);
+    }
+
+    let regexFecha = /^\d{4}-\d{2}-\d{2}$/;
+    if (!regexFecha.test(fecha_publicacion)) {
+        return respuesta.status(422);
+    }
+
     try{
         let id = await crearLibro(titulo, autor, url_portada, genero, fecha_publicacion, paginas, sinopsis);
         respuesta.status(201);
@@ -119,6 +128,10 @@ servidor.post("/reviews/nueva", async (peticion, respuesta) => {
     if(!puntuacion || !id_usuario || !id_libro || !texto) {
         return respuesta.status(400)
     }
+
+    if (puntuacion < 1 || puntuacion > 5) {
+    return respuesta.status(422); //datos presentes pero no válidos
+}
 
     try{
         let id = await crearReview(puntuacion, id_usuario, id_libro, texto);
