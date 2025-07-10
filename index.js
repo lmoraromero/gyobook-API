@@ -47,7 +47,9 @@ servidor.post("/registro", async (peticion, respuesta) => {
 
     try{
         let id = await crearUsuario(usuario, password);
-        respuesta.status(201);
+        //generar token con id y usuario
+        let token = generarToken({id, usuario})
+        respuesta.status(201).json({token}); //envía el token para el registro
         //respuesta.send(`usuario con id: ${id}`)
     }catch(error){
         respuesta.status(500);
@@ -64,13 +66,13 @@ servidor.post("/login", async (peticion, respuesta) => {
         let posibleUsuario = await buscarUsuario(usuario)
 
         if(posibleUsuario.length == 0){
-            return respuesta.sendStatus(401);
+            return respuesta.sendStatus(401); //Unauthorized
         }
 
         let valido = await bcrypt.compare(password, posibleUsuario[0].password);
 
         if(!valido){
-            return respuesta.sendStatus(403);
+            return respuesta.sendStatus(403); //Forbidden
         }
 
         respuesta.json({ token : generarToken({
