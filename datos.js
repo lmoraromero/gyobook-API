@@ -4,11 +4,10 @@ dotenv.config();
 //-------------------------------------
 
 import postgres from "postgres";
-import bcrypt, { hash } from "bcrypt";
+import bcrypt from "bcrypt";
 
 
 //Función para conectarse a postgres
-
 function conectar(){
     return postgres({
         host : process.env.DB_HOST,
@@ -20,7 +19,6 @@ function conectar(){
 
 //Función para crear usuario
 //La función recibirá como argumentos: nombre(string) y password (string sin hashear) y devolverá un número, el id del usuario creado
-
 export function crearUsuario(usuario, password){
     return new Promise((ok, ko) => {
         const sql = conectar(); // conectar a la base de datos
@@ -48,7 +46,6 @@ export function crearUsuario(usuario, password){
 
 //Función para buscar si el usuario está en la BBDD
 //La función recibirá como argumento el nombre de usuario
-
 export function buscarUsuario(usuario){
     return new Promise((ok, ko) => {
 
@@ -69,7 +66,6 @@ export function buscarUsuario(usuario){
 
 //Función para crear fichas de libros
 //La función recibirá como argumentos: título(string), autor(string), páginas(integer), fecha_publicacion(formato date -> YYYY-MM-DD), url_portada (string con la url), sinopsis(string), género(string) y devolverá el id
-
 export function crearLibro(titulo, autor, url_portada, genero, fecha_publicacion, paginas, sinopsis){
     return new Promise((ok, ko) => {
         const sql = conectar();
@@ -88,7 +84,6 @@ export function crearLibro(titulo, autor, url_portada, genero, fecha_publicacion
 
 
 //Función para buscar todos los libros de la BDD
-
 export function buscarLibros(){
     return new Promise((ok, ko) => {
 
@@ -108,7 +103,6 @@ export function buscarLibros(){
 
 //Función para crear reseñas de libros
 //La función recibirá como argumentos: creada_en(timestamp, now()), puntuacion(numeric, entre 1-5), id_usuario(integer), id_libro(integer), texto(string) y devolverá el id
-
 export function crearReview(puntuacion, id_usuario, id_libro, texto){
     return new Promise((ok, ko) => {
         const sql = conectar();
@@ -126,7 +120,6 @@ export function crearReview(puntuacion, id_usuario, id_libro, texto){
 }
 
 //Función para buscar todas las reviews de un libro y las trae ordenadas de más reciente a más antigua
-
 export function buscarReviews(id_libro){
     return new Promise((ok, ko) => {
 
@@ -141,6 +134,23 @@ export function buscarReviews(id_libro){
             sql.end(); 
             ko({ error: "error en la base de datos" });
         } )
+    });
+}
+
+//Función para buscar todas las reseñas de un usuario
+export function buscarReviewsUsuario(id_usuario){
+    return new Promise((ok, ko) => {
+        const sql = conectar();
+
+        sql`SELECT * FROM reviews WHERE id_usuario = ${id_usuario} ORDER BY creada_en DESC`
+        .then(resultado => {
+            sql.end();
+            ok(resultado);
+        })
+        .catch(error => {
+            sql.end();
+            ko({ error: "error en la base de datos" });
+        });
     });
 }
 
