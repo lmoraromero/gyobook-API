@@ -47,6 +47,8 @@ function autorizar(peticion, respuesta, siguiente){
     });
 }
 
+//Middlewares
+
 //Ruta para registro de usuarios
 servidor.post("/registro", async (peticion, respuesta) => {
     let { usuario, password } = peticion.body;
@@ -66,8 +68,7 @@ servidor.post("/registro", async (peticion, respuesta) => {
         //respuesta.send(`usuario con id: ${id}`)
 
     }catch(error){
-        respuesta.status(500);
-        respuesta.json( {error : "error en el servidor"} );
+        siguiente(error);
     }
 
 });
@@ -95,9 +96,7 @@ servidor.post("/login", async (peticion, respuesta) => {
             usuario : posibleUsuario[0].usuario
         })});
     }catch(error){
-        respuesta.status(500);
-
-        respuesta.json( {error : "error en el servidor"} );
+        siguiente(error);
     }
 })
 
@@ -108,9 +107,7 @@ servidor.get("/libros", async (peticion, respuesta) => {
 
         respuesta.json(libros);
     }catch(error){
-        respuesta.status(500);
-
-        respuesta.json( {error : "error en el servidor"} );
+        siguiente(error);
     }
 })
 
@@ -138,10 +135,9 @@ servidor.post("/libro/nuevo", autorizar, async (peticion, respuesta) => {
     try{
         let id = await crearLibro(titulo, autor, url_portada, genero, fecha_publicacion, paginas, sinopsis);
         respuesta.status(201);
-        respuesta.send(`libro con id: ${id}`)
+        //respuesta.send(`libro con id: ${id}`)
     }catch(error){
-        respuesta.status(500);
-        respuesta.json( {error : "error en el servidor"} );
+        siguiente(error);
     }
 })
 
@@ -165,8 +161,7 @@ servidor.post("/reviews/nueva", autorizar, async (peticion, respuesta) => {
         respuesta.status(201);
         //respuesta.send(`reseña con id: ${id}`)
     }catch(error){
-        respuesta.status(500);
-        respuesta.json( {error : "error en el servidor"} );
+        siguiente(error);
     }
 })
 
@@ -180,8 +175,7 @@ servidor.get("/reviews/:id_libro", async (peticion, respuesta) => {
         let reviews = await buscarReviews(id_libro);
         respuesta.json(reviews);
     }catch(error){
-        respuesta.status(500);
-        respuesta.json( {error : "error en el servidor"} );
+        siguiente(error);
     }
 })
 
@@ -193,22 +187,21 @@ servidor.get("/reviews/usuario/:id_usuario", async (peticion, respuesta) => {
         let reviews = await buscarReviewsUsuario(id_usuario);
         respuesta.json(reviews);
     } catch (error) {
-        respuesta.status(500);
-        respuesta.json( {error : "error en el servidor"} );
+        siguiente(error);
     }
 });
 
 
 // Middleware para manejar errores (cualquier error que ocurra en rutas o middleware previos)
 servidor.use((error, peticion, respuesta, siguiente) => {
-    respuesta.status(400);
-    respuesta.json({ error : "error en la petición" });
+    respuesta.status(500);
+    respuesta.json({ error : "Error en el servidor" });
 });
 
 // Middleware para rutas no encontradas (404)
 servidor.use((peticion, respuesta) => {
     respuesta.status(404);
-    respuesta.json({ error : "recurso no encontrado" });
+    respuesta.json({ error : "Recurso no encontrado" });
 });
 
 

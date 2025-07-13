@@ -154,6 +154,26 @@ export function buscarReviewsUsuario(id_usuario){
     });
 }
 
+//Función para realizar una búsuqeda por libro y/o autor
+export function busqueda(texto){
+    return new Promise((ok, ko) => {
+        const sql = conectar();
+        let palabra = `%${texto}%`; //hace que la base de datos busque cualquier cosa que tenga esa palabra
+
+        //Lo que hace la query es: compara ignorando las mayúsculas y las minúsculas
+        sql`SELECT * FROM books WHERE LOWER(titulo) LIKE LOWER(${palabra}) OR LOWER(autor) LIKE LOWER(${palabra})`
+        .then(resultado => {
+            sql.end();
+            ok(resultado)
+        })
+        .catch(error => {
+            sql.end();
+            ko({ error: "error en la base de datos" });
+        })
+
+    })
+}
+
 
 
 //Pruebas
