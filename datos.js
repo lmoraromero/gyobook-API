@@ -23,13 +23,15 @@ export function crearUsuario(usuario, password){
     return new Promise((ok, ko) => {
         const sql = conectar(); // conectar a la base de datos
 
+        let perfil = `/img/pfp/profile-${Math.floor(Math.random() * 8) + 1}.png`
+
         // Hasheamos la contraseña con .then
         bcrypt.hash(password, 10)
         .then(hashPassword => {
             // Insertamos en la BBDD con el hash
             return sql`
-                INSERT INTO users (usuario, password) 
-                VALUES (${usuario}, ${hashPassword}) 
+                INSERT INTO users (usuario, password, perfil) 
+                VALUES (${usuario}, ${hashPassword}, ${perfil}) 
                 RETURNING id
             `;
         })
@@ -178,7 +180,7 @@ export function busqueda(texto){
 
 //Pruebas
 /*
-crearUsuario("jacinta", "123456")
+crearUsuario("Bernarda", "123456")
 .then(x => console.log(x))
 .catch(x => console.log(x))
 */
