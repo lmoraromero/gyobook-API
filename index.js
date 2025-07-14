@@ -90,11 +90,14 @@ servidor.post("/login", async (peticion, respuesta) => {
             return respuesta.sendStatus(403); //Forbidden --> la contraseña es incorrecta
         }
 
-        //genera el token y se envía
+        //genera el token y se envíar los datos del usuario
         respuesta.json({ token : generarToken({
             id : posibleUsuario[0].id,
             usuario : posibleUsuario[0].usuario
-        })});
+        }),
+            usuario : posibleUsuario[0].usuario,
+            perfil : posibleUsuario[0].perfil 
+        });
     }catch(error){
         siguiente(error);
     }
