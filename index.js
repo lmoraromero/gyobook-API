@@ -137,7 +137,7 @@ servidor.get("/libros", async (peticion, respuesta) => {
 //sólo los usuarios podrán crear fichas de libros
 servidor.post("/libro/nuevo", autorizar, upload.single("portada"), async (peticion, respuesta) => {
     let { titulo, autor, genero, fecha_publicacion, paginas, sinopsis } = peticion.body;
-    let url_portada = peticion.url_portada; 
+    let url_portada = peticion.file ? `portadas/${peticion.file.filename}` : null;
 
     //validación de campos
     if(!titulo || !autor || !genero || !fecha_publicacion || !paginas || !sinopsis){
@@ -149,7 +149,8 @@ servidor.post("/libro/nuevo", autorizar, upload.single("portada"), async (petici
     }
 
     //validación de tipo de datos y formato: que las páginas sean un número y que sean mayor a 0
-    if (!Number.isInteger(paginas) || paginas <= 0) {
+    let paginasNum = Number(paginas);
+    if (!Number.isInteger(paginasNum) || paginasNum <= 0) {
         return respuesta.status(422); //hay datos, pero no son válidos
     }
 
@@ -160,8 +161,8 @@ servidor.post("/libro/nuevo", autorizar, upload.single("portada"), async (petici
     }
 
     try{
-        let id = await crearLibro(titulo, autor, url_portada, genero, fecha_publicacion, paginas, sinopsis);
-        respuesta.status(201);
+        let id = await crearLibro(titulo, autor, url_portada, genero, fecha_publicacion, paginasNum, sinopsis);
+        respuesta.status(201).json({ id }); 
         //respuesta.send(`libro con id: ${id}`)
     }catch(error){
         siguiente(error);
