@@ -9,6 +9,7 @@ import express from "express";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import multer from "multer";
 import { buscarUsuario, crearUsuario, crearLibro, buscarLibros, crearReview, buscarReviews, buscarReviewsUsuario } from "./datos.js";
 
 //Crear el servidor
