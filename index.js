@@ -12,14 +12,18 @@ import jwt from "jsonwebtoken";
 import multer from "multer";
 import { buscarUsuario, crearUsuario, crearLibro, buscarLibros, crearReview, buscarReviews, buscarReviewsUsuario } from "./datos.js";
 
-//Crear el servidor
-const servidor = express();
+//Configuración de multer para subir imágenes a img/portadas
+const guardar = multer.diskStorage({
+    destination : "public/portadas", //donde se guardarán
+    filename : (peticion, fichero, callback) => {
+        let nombreLimpio = fichero.originalname.replace(/\s+/g, "_"); //reemplaza todos los espacios en blanco del nombre original del archivo, para poder mantener la ruta más limpia
+        let nombreFinal = Date.now() + "-" + nombreLimpio;
 
-//Middleware para permitir que el servidor acepte peticiones desde otros dominios
-servidor.use(cors());
-
-//Middleware para interpretar JSON en las peticiones
-servidor.use(express.json());
+        //url que se guarda en la BBDD
+        peticion.url_portada = `/portadas/${nombreFinal}`;
+        callback(null, nombreFinal);
+    }
+})
 
 //Función para generar un token JWT con los datos que se proporcionan (en el front recibirá el usuario y el id)
 //la función retornará el token 
@@ -47,6 +51,20 @@ function autorizar(peticion, respuesta, siguiente){
         respuesta.sendStatus(403); //el token a expirado o es inválido
     });
 }
+
+//Crear el servidor
+const servidor = express();
+
+const upload = multer({ storage : guardar });
+
+//Middleware para permitir que el servidor acepte peticiones desde otros dominios
+servidor.use(cors());
+
+//Middleware para interpretar JSON en las peticiones
+servidor.use(express.json());
+
+//Servir la carpeta de portadas en estático
+servidor.use("/portadas", express.static("public/portadas"));
 
 //Middlewares
 
@@ -117,11 +135,16 @@ servidor.get("/libros", async (peticion, respuesta) => {
 
 //Ruta para crear una ficha de libro nueva
 //sólo los usuarios podrán crear fichas de libros
-servidor.post("/libro/nuevo", autorizar, async (peticion, respuesta) => {
-    let { titulo, autor, url_portada, genero, fecha_publicacion, paginas, sinopsis } = peticion.body;
+servidor.post("/libro/nuevo", autorizar, upload.single("portada"), async (peticion, respuesta) => {
+    let { titulo, autor, genero, fecha_publicacion, paginas, sinopsis } = peticion.body;
+    let url_portada = peticion.url_portada; 
 
     //validación de campos
-    if(!titulo || !autor || !url_portada || !genero || !fecha_publicacion || !paginas || !sinopsis){
+    if(!titulo || !autor || !genero || !fecha_publicacion || !paginas || !sinopsis){
+        return respuesta.status(400);
+    }
+
+    if(!peticion.file){
         return respuesta.status(400);
     }
 
