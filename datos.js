@@ -103,6 +103,24 @@ export function buscarLibros(){
     });
 }
 
+//Función para buscar libro por id
+export function buscarLibroId(id){
+    return new Promise((ok, ko) => {
+
+        const sql = conectar();
+
+        sql`SELECT * FROM books WHERE id = ${id}`
+        .then( resultado => {
+            sql.end();
+            ok(resultado) 
+        })
+        .catch( error => {
+            sql.end(); 
+            ko({ error: "error en la base de datos" });
+        } )
+    });
+}
+
 //Función para crear reseñas de libros
 //La función recibirá como argumentos: creada_en(timestamp, now()), puntuacion(numeric, entre 1-5), id_usuario(integer), id_libro(integer), texto(string) y devolverá el id
 export function crearReview(puntuacion, id_usuario, id_libro, texto){
@@ -186,6 +204,11 @@ crearUsuario("Bernarda", "123456")
 */
 /*
 buscarUsuario("tomasa")
+.then(x => console.log(x))
+.catch(x => console.log(x))
+*/
+/*
+buscarLibroId(3)
 .then(x => console.log(x))
 .catch(x => console.log(x))
 */

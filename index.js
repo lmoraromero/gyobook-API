@@ -10,7 +10,7 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import multer from "multer";
-import { buscarUsuario, crearUsuario, crearLibro, buscarLibros, crearReview, buscarReviews, buscarReviewsUsuario } from "./datos.js";
+import { buscarUsuario, crearUsuario, crearLibro, buscarLibros, buscarLibroId, crearReview, buscarReviews, buscarReviewsUsuario } from "./datos.js";
 
 //Configuración de multer para subir imágenes a img/portadas
 const guardar = multer.diskStorage({
@@ -164,6 +164,22 @@ servidor.post("/libro/nuevo", autorizar, upload.single("portada"), async (petici
         let id = await crearLibro(titulo, autor, url_portada, genero, fecha_publicacion, paginasNum, sinopsis);
         respuesta.status(201).json({ id }); 
         //respuesta.send(`libro con id: ${id}`)
+    }catch(error){
+        siguiente(error);
+    }
+})
+
+//Ruta de un libro en concreto según su id
+servidor.get("/libro/:id", async (peticion, respuesta, siguiente) => {
+    let {id} = peticion.params;
+    console.log(id)
+    try{
+        let libro = await buscarLibroId(id);
+        console.log(libro)
+        if(!libro){
+            return respuesta.status(404);
+        }
+        respuesta.json(libro);
     }catch(error){
         siguiente(error);
     }
