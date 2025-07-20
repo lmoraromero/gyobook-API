@@ -145,7 +145,9 @@ export function buscarReviews(id_libro){
 
         const sql = conectar();
 
-        sql`SELECT * FROM reviews WHERE id_libro = ${id_libro} ORDER BY creada_en DESC`
+        sql`SELECT reviews.*, users.usuario AS nombre_usuario, users.perfil FROM reviews 
+            JOIN users ON reviews.id_usuario = users.id
+            WHERE id_libro = ${id_libro} ORDER BY creada_en DESC`
         .then( resultado => {
             sql.end();
             ok(resultado) 
@@ -228,7 +230,7 @@ crearReview(5, 3, 1, "Ni tan mal")
 .catch(x => console.log(x))
 */
 /*
-buscarReviews(1)
+buscarReviews(3)
 .then(x => console.log(x))
 .catch(x => console.log(x))
 */
