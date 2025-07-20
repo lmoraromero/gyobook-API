@@ -114,6 +114,7 @@ servidor.post("/login", async (peticion, respuesta) => {
             id : posibleUsuario[0].id,
             usuario : posibleUsuario[0].usuario
         }),
+            id : posibleUsuario[0].id,
             usuario : posibleUsuario[0].usuario,
             perfil : posibleUsuario[0].perfil 
         });
@@ -172,10 +173,9 @@ servidor.post("/libro/nuevo", autorizar, upload.single("portada"), async (petici
 //Ruta de un libro en concreto según su id
 servidor.get("/libro/:id", async (peticion, respuesta, siguiente) => {
     let {id} = peticion.params;
-    console.log(id)
     try{
         let libro = await buscarLibroId(id);
-        console.log(libro)
+
         if(!libro){
             return respuesta.status(404);
         }
@@ -191,7 +191,7 @@ servidor.post("/reviews/nueva", autorizar, async (peticion, respuesta) => {
     let { puntuacion, id_usuario, id_libro, texto } = peticion.body;
 
     //validación básica
-    if(!puntuacion || !id_usuario || !id_libro || !texto) {
+    if(!puntuacion || !id_usuario || !id_libro) {
         return respuesta.status(400)
     }
 
@@ -202,7 +202,7 @@ servidor.post("/reviews/nueva", autorizar, async (peticion, respuesta) => {
 
     try{
         let id = await crearReview(puntuacion, id_usuario, id_libro, texto);
-        respuesta.status(201);
+        respuesta.sendStatus(201);
         //respuesta.send(`reseña con id: ${id}`)
     }catch(error){
         siguiente(error);
