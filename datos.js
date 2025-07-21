@@ -183,7 +183,7 @@ export function busqueda(texto){
         let palabra = `%${texto}%`; //hace que la base de datos busque cualquier cosa que tenga esa palabra
 
         //Lo que hace la query es: compara ignorando las mayúsculas y las minúsculas
-        sql`SELECT * FROM books WHERE LOWER(titulo) LIKE LOWER(${palabra}) OR LOWER(autor) LIKE LOWER(${palabra})`
+        sql`SELECT * FROM books WHERE LOWER(titulo) LIKE LOWER(${palabra}) OR LOWER(autor) LIKE LOWER(${palabra}) OR LOWER(genero) LIKE LOWER(${palabra})`
         .then(resultado => {
             sql.end();
             ok(resultado)

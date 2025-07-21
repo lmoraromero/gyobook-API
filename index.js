@@ -10,7 +10,7 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import multer from "multer";
-import { buscarUsuario, crearUsuario, crearLibro, buscarLibros, buscarLibroId, crearReview, buscarReviews, buscarReviewsUsuario } from "./datos.js";
+import { buscarUsuario, crearUsuario, crearLibro, buscarLibros, buscarLibroId, crearReview, buscarReviews, buscarReviewsUsuario, busqueda } from "./datos.js";
 
 //Configuración de multer para subir imágenes a img/portadas
 const guardar = multer.diskStorage({
@@ -230,10 +230,22 @@ servidor.get("/reviews/usuario/:id_usuario", async (peticion, respuesta) => {
     try {
         let reviews = await buscarReviewsUsuario(id_usuario);
         respuesta.json(reviews);
-    } catch (error) {
+    }catch(error){
         siguiente(error);
     }
 });
+
+//Ruta para buscar libros por título, autor o género
+servidor.get("/busqueda", async (peticion, respuesta, siguiente) => {
+    let {texto} = peticion.query; //los datos se envían como parámetros en la URL
+
+    try{
+        let resultado = await busqueda(texto);
+        respuesta.status(200).json(resultado);
+    }catch(error){
+        siguiente(error);
+    }
+})
 
 
 // Middleware para manejar errores (cualquier error que ocurra en rutas o middleware previos)
