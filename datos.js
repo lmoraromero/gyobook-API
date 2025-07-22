@@ -164,7 +164,9 @@ export function buscarReviewsUsuario(id_usuario){
     return new Promise((ok, ko) => {
         const sql = conectar();
 
-        sql`SELECT * FROM reviews WHERE id_usuario = ${id_usuario} ORDER BY creada_en DESC`
+        sql`SELECT reviews.*, books.titulo, books.autor, books.url_portada FROM reviews 
+        JOIN books ON reviews.id_libro = books.id
+        WHERE id_usuario = ${id_usuario} ORDER BY creada_en DESC`
         .then(resultado => {
             sql.end();
             ok(resultado);

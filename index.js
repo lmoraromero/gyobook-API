@@ -224,7 +224,7 @@ servidor.get("/reviews/:id_libro", async (peticion, respuesta) => {
 })
 
 //Ruta para traer todas las reseñas de un usuario
-servidor.get("/reviews/usuario/:id_usuario", async (peticion, respuesta) => {
+servidor.get("/reviews/usuario/:id_usuario", async (peticion, respuesta, siguiente) => {
     let { id_usuario } = peticion.params;
 
     try {
