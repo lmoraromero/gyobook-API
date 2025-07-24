@@ -14,6 +14,10 @@ function conectar(){
         database : process.env.DB_NAME,
         user : process.env.DB_USER,
         password : process.env.DB_PASSWORD,
+        port: process.env.DB_PORT,
+        ssl: {
+            rejectUnauthorized: false //activa la conexión segura (SSL), pero desactiva la validación estricta del certificado
+        }
     });
 }
 
