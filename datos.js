@@ -36,7 +36,7 @@ export function crearUsuario(usuario, password){
             return sql`
                 INSERT INTO users (usuario, password, perfil) 
                 VALUES (${usuario}, ${hashPassword}, ${perfil}) 
-                RETURNING id
+                RETURNING id, perfil
             `;
         })
         .then(([{ id }]) => {
