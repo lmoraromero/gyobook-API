@@ -73,9 +73,6 @@ servidor.use(cors());
 //Middleware para interpretar JSON en las peticiones
 servidor.use(express.json());
 
-//Servir la carpeta de portadas en estático
-servidor.use("/portadas", express.static("public/portadas"));
-
 //Middlewares
 
 //Ruta para registro de usuarios
