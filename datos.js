@@ -39,9 +39,9 @@ export function crearUsuario(usuario, password){
                 RETURNING id, perfil
             `;
         })
-        .then(([{ id }]) => {
+        .then(([{ id, perfil }]) => {
             sql.end(); // cerramos conexión
-            ok(id);    // resolvemos con el id
+            ok({ id, usuario, perfil });    // resolvemos con el id
         })
         .catch( error => {
             sql.end(); // cerramos conexión también si hay error

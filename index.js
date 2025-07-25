@@ -79,7 +79,7 @@ servidor.post("/registro", async (peticion, respuesta) => {
     }
 
     try{
-        let [{id, perfil}] = await crearUsuario(usuario, password);
+        let {id, usuario, perfil} = await crearUsuario(usuario, password);
 
         //generar token con id y usuario
         let token = generarToken({id, usuario})
@@ -88,7 +88,8 @@ servidor.post("/registro", async (peticion, respuesta) => {
         //respuesta.send(`usuario con id: ${id}`)
 
     }catch(error){
-        siguiente(error);
+        respuesta.status(500);
+        respuesta.json({ error : "Error en el servidor" });
     }
 
 });
