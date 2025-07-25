@@ -79,12 +79,12 @@ servidor.post("/registro", async (peticion, respuesta) => {
     }
 
     try{
-        let {id, usuario, perfil} = await crearUsuario(usuario, password);
+        let {id, usuario: nombreUsuario, perfil} = await crearUsuario(usuario, password);
 
         //generar token con id y usuario
-        let token = generarToken({id, usuario})
+        let token = generarToken({id, usuario: nombreUsuario})
 
-        respuesta.status(201).json({token, usuario: { id, usuario, perfil } }); //envía el token y el usuario para el registro
+        respuesta.status(201).json({token, usuario: { id, usuario: nombreUsuario, perfil } }); //envía el token y el usuario para el registro
         //respuesta.send(`usuario con id: ${id}`)
 
     }catch(error){
