@@ -10,21 +10,30 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import multer from "multer";
+import cloudinary from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { buscarUsuario, crearUsuario, crearLibro, buscarLibros, buscarLibroId, crearReview, buscarReviews, buscarReviewsUsuario, busqueda } from "./datos.js";
 
 
-//Configuración de multer para subir imágenes a img/portadas
-const guardar = multer.diskStorage({
-    destination : "public/portadas", //donde se guardarán
-    filename : (peticion, fichero, callback) => {
-        let nombreLimpio = fichero.originalname.replace(/\s+/g, "_"); //reemplaza todos los espacios en blanco del nombre original del archivo, para poder mantener la ruta más limpia
-        let nombreFinal = Date.now() + "-" + nombreLimpio;
+//Configurar Cloudinary con variables de entorno
+cloudinary.v2.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-        //url que se guarda en la BBDD
-        peticion.url_portada = `/portadas/${nombreFinal}`;
-        callback(null, nombreFinal);
-    }
-})
+//Configuración de multer para subir imágenes a img/portadas
+const guardar = new CloudinaryStorage({
+    cloudinary: cloudinary.v2,
+    params : {
+        folder : "portadas",
+        allowed_formats : ["jpg", "jpeg", "png"],
+        public_id : (peticion, fichero) => {
+            return Date.now() + "-" + fichero.originalname.replace(/\s+/g, "_") //reemplaza todos los espacios en blanco del nombre original del archivo, para poder mantener la ruta más limpia
+        },
+    },
+});
+
 
 //Función para generar un token JWT con los datos que se proporcionan (en el front recibirá el usuario y el id)
 //la función retornará el token 
@@ -140,7 +149,7 @@ servidor.get("/libros", async (peticion, respuesta) => {
 //sólo los usuarios podrán crear fichas de libros
 servidor.post("/libro/nuevo", autorizar, upload.single("portada"), async (peticion, respuesta) => {
     let { titulo, autor, genero, fecha_publicacion, paginas, sinopsis } = peticion.body;
-    let url_portada = peticion.file ? `portadas/${peticion.file.filename}` : null;
+    let url_portada = peticion.file ? peticion.file.path : null;
 
     //validación de campos
     if(!titulo || !autor || !genero || !fecha_publicacion || !paginas || !sinopsis){
