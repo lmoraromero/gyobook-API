@@ -22,17 +22,17 @@ function conectar(){
 }
 
 //Función para crear usuario
-//La función recibirá como argumentos: nombre(string) y password (string sin hashear) y devolverá un número, el id del usuario creado
+//La función recibirá como argumentos: nombre(string) y password (string sin hashear) y generará una foto de perfil aleatoria, devolviendo todos los datos
 export function crearUsuario(usuario, password){
     return new Promise((ok, ko) => {
-        const sql = conectar(); // conectar a la base de datos
+        const sql = conectar(); //conectar a la base de datos
 
-        let perfil = `/img/pfp/profile-${Math.floor(Math.random() * 8) + 1}.png`
+        let perfil = `/img/pfp/profile-${Math.floor(Math.random() * 8) + 1}.png` //generamos una foto de perfil aleatoria para el usuario (estas imágenes se encuentran en una carpeta del front)
 
-        // Hasheamos la contraseña con .then
+        //hasheamos la contraseña
         bcrypt.hash(password, 10)
         .then(hashPassword => {
-            // Insertamos en la BBDD con el hash
+            //insertamos en la BBDD con el hash
             return sql`
                 INSERT INTO users (usuario, password, perfil) 
                 VALUES (${usuario}, ${hashPassword}, ${perfil}) 
@@ -40,11 +40,11 @@ export function crearUsuario(usuario, password){
             `;
         })
         .then(([{ id, perfil }]) => {
-            sql.end(); // cerramos conexión
-            ok({ id, usuario : usuario, perfil });    // resolvemos con el id
+            sql.end(); //cerramos conexión
+            ok({ id, usuario : usuario, perfil }); //devolvemos el id, el usuario y la foto de perfil para el front
         })
         .catch( error => {
-            sql.end(); // cerramos conexión también si hay error
+            sql.end(); //cerramos conexión también si hay error
             ko({ error: "error en la base de datos" });
         } )
     });
@@ -90,6 +90,7 @@ export function crearLibro(titulo, autor, url_portada, genero, fecha_publicacion
 
 
 //Función para buscar todos los libros de la BDD
+//Esta función trae todos los libros de la BBDD, ordenándolos por orden de creación (es decir, el id descendente)
 export function buscarLibros(){
     return new Promise((ok, ko) => {
 
@@ -108,6 +109,7 @@ export function buscarLibros(){
 }
 
 //Función para buscar libro por id
+//La función recibe como argumento el id del libro para poder buscarlo
 export function buscarLibroId(id){
     return new Promise((ok, ko) => {
 
@@ -143,7 +145,9 @@ export function crearReview(puntuacion, id_usuario, id_libro, texto){
     });
 }
 
-//Función para buscar todas las reviews de un libro y las trae ordenadas de más reciente a más antigua
+//Función para buscar todas las reviews de un libro 
+//La función recibe como argumento el id del libro para bsucar las reseñas pertenecientes a ese libro y las trae ordenadas de más reciente a más antigua
+//Se realiza un JOIN con la tabla users en la petición para poder traer los datos del usuario también al front
 export function buscarReviews(id_libro){
     return new Promise((ok, ko) => {
 
@@ -164,6 +168,8 @@ export function buscarReviews(id_libro){
 }
 
 //Función para buscar todas las reseñas de un usuario
+//Recibe como argumento el id del usuario paar ver todas las reseñas creadas por el usuario, además de traerlas de más antigua a más nueva
+//Se realiza un JOIN con la tabla books en la petición para traer lso datos del libro reseñado en el front
 export function buscarReviewsUsuario(id_usuario){
     return new Promise((ok, ko) => {
         const sql = conectar();
@@ -183,12 +189,13 @@ export function buscarReviewsUsuario(id_usuario){
 }
 
 //Función para realizar una búsuqeda por libro y/o autor
+//Recibe como argumento el texto que se va a buscar
 export function busqueda(texto){
     return new Promise((ok, ko) => {
         const sql = conectar();
         let palabra = `%${texto}%`; //hace que la base de datos busque cualquier cosa que tenga esa palabra
 
-        //Lo que hace la query es: compara ignorando las mayúsculas y las minúsculas
+        //Lo que hace la query es: compara con LIKE, ignorando las mayúsculas y las minúsculas usando LOWER
         sql`SELECT * FROM books WHERE LOWER(titulo) LIKE LOWER(${palabra}) OR LOWER(autor) LIKE LOWER(${palabra}) OR LOWER(genero) LIKE LOWER(${palabra})`
         .then(resultado => {
             sql.end();
@@ -201,42 +208,3 @@ export function busqueda(texto){
 
     })
 }
-
-
-
-//Pruebas
-/*
-crearUsuario("Bernarda", "123456")
-.then(x => console.log(x))
-.catch(x => console.log(x))
-*/
-/*
-buscarUsuario("tomasa")
-.then(x => console.log(x))
-.catch(x => console.log(x))
-*/
-/*
-buscarLibroId(3)
-.then(x => console.log(x))
-.catch(x => console.log(x))
-*/
-/*
-crearLibro("libro uno", "autor cualquiera", "esto_es_una_url", "genero cualquiera", "1999-12-31", 800, "En un lugar de la Mancha, de cuyo nombre no quiero acordarme.....")
-.then(x => console.log(x))
-.catch(x => console.log(x))
-*/
-/*
-buscarLibros()
-.then(x => console.log(x))
-.catch(x => console.log(x))
-*/
-/*
-crearReview(5, 3, 1, "Ni tan mal")
-.then(x => console.log(x))
-.catch(x => console.log(x))
-*/
-/*
-buscarReviews(3)
-.then(x => console.log(x))
-.catch(x => console.log(x))
-*/
