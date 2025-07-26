@@ -122,7 +122,7 @@ Repositorio GitHub del frontend:
 
 Si quieres saber más sobre el proyecto o contactarme, puedes encontrarme en:
 
-- [LinkedIn](www.linkedin.com/in/laura-mora-romero)
+- [LinkedIn](www.linkedin.com/in/laura-mora-romero) : www.linkedin.com/in/laura-mora-romero
 - [GitHub](https://github.com/lmoraromero)
 
 ---
