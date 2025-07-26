@@ -21,42 +21,19 @@ La API está construida con **Node.js**, **Express** y **PostgreSQL**.
 
 ## 3. Tecnologías y herramientas utilizadas 🛠️
 
-- **Node.js**: entorno de ejecución para JavaScript en el backend.
-- **Express**: framework para gestionar rutas y middleware HTTP.
-- **PostgreSQL**: base de datos relacional para almacenar usuarios, libros y reseñas.
-- **JSON Web Tokens (JWT)**: para autenticación y autorización de usuarios.
-- **bcrypt**: para cifrado seguro de contraseñas.
-- **Multer + Cloudinary**: para la subida y almacenamiento de imágenes en la nube.
-- **dotenv**: gestión de variables de entorno.
-- **cors**: para permitir solicitudes entre dominios (frontend/backend).
+- ⚙️ **Node.js**: entorno de ejecución para JavaScript en el backend.  
+- 🚂 **Express**: framework para gestionar rutas y middleware HTTP.  
+- 🗄️ **PostgreSQL**: base de datos relacional para almacenar usuarios, libros y reseñas.  
+- 🔐 **JSON Web Tokens (JWT)**: para autenticación y autorización de usuarios.  
+- 🔒 **bcrypt**: para cifrado seguro de contraseñas.  
+- 🗂️ + ☁️ **Multer + Cloudinary**: para la subida y almacenamiento de imágenes en la nube.  
+- 🔧 **dotenv**: gestión de variables de entorno.  
+- 🌐 **cors**: para permitir solicitudes entre dominios (frontend/backend).  
+
 
 ---
 
-## 4. Instalación y configuración ⚙️
-
-1. Clonar el repositorio.  
-2. Ejecutar `npm install` para instalar dependencias.  
-3. Crear un archivo `.env` con las variables necesarias:
-
-   ```env
-   DB_HOST=
-   DB_NAME=
-   DB_USER=
-   DB_PASSWORD=
-   DB_PORT=
-   SECRET=
-   CLOUDINARY_CLOUD_NAME=
-   CLOUDINARY_API_KEY=
-   CLOUDINARY_API_SECRET=
-   PORT=
-
-4. Ejecutar el servidor con `node index.js` o `npm start`.
-
-El servidor escuchará en el puerto configurado en `.env`.
-
----
-
-## 5. Endpoints principales 🚀
+## 4. Endpoints principales 🚀
 
 | Método | Ruta                      | Descripción                              | Autenticación |
 |--------|---------------------------|----------------------------------------|--------------|
@@ -72,7 +49,7 @@ El servidor escuchará en el puerto configurado en `.env`.
 
 ---
 
-## 6. Autenticación 🔐
+## 5. Autenticación 🔐
 
 Se utiliza JWT para proteger las rutas que requieren usuario autenticado.
 
@@ -83,7 +60,7 @@ El token se genera al registrarse o iniciar sesión correctamente.
 
 ---
 
-## 7. Manejo de imágenes 📷
+## 6. Manejo de imágenes 📷
 
 - Las portadas se suben mediante **Multer** integrado con **Cloudinary**.  
 - Las imágenes se almacenan en la nube (Cloudinary).  
@@ -91,7 +68,7 @@ El token se genera al registrarse o iniciar sesión correctamente.
 
 ---
 
-## 8. Manejo de errores ⚠️
+## 7. Manejo de errores ⚠️
 
 La API responde con códigos HTTP estándar para facilitar el manejo de errores en el frontend:
 
@@ -107,7 +84,7 @@ La API responde con códigos HTTP estándar para facilitar el manejo de errores 
 
 ---
 
-## 9. Acceso al Frontend 🌐
+## 8. Acceso al Frontend 🌐
 
 Puedes acceder al frontend de Gyobook en la siguiente URL:
 
@@ -118,7 +95,7 @@ Repositorio GitHub del frontend:
 
 ---
 
-## 10. Contacto ✉️
+## 9. Contacto ✉️
 
 Si quieres saber más sobre el proyecto o contactarme, puedes encontrarme en:
 
